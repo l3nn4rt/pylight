@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+# pylight - Highlight multiple patterns at once.
+# @author: l3nn4rt
+
+import re
+import sys
+
+color_codes = {
+    "none":    "0",
+    "black":   "1;30",
+    "red":     "1;31",
+    "green":   "1;32",
+    "yellow":  "1;33",
+    "blue":    "1;34",
+    "magenta": "1;35",
+    "cyan":    "1;36",
+    "white":   "1;37"
+}
+
+palette = list(color_codes)
+
+def get_color(index=0):
+    return "\033[" + color_codes.get(palette[index], palette[0]) + "m"
+
+def warn(msg):
+    print("%s: %s" % (sys.argv[0], msg), file=sys.stderr)
+
+def squeeze(lst):
+    slices, begin, count = [], 0, 0
+    for i, x in enumerate(lst):
+        if not count:
+            count = 1
+        elif x == lst[begin]:
+            count += 1
+        else:
+            slices.append((begin, i, lst[begin]))
+            begin, count = i, 1
+
+        if i == len(lst) - 1:
+            slices.append((begin, len(lst), lst[begin]))
+    return slices
+
+def main(args):
+    if "-h" in args or "--help" in args:
+        print("Usage: %s [-h|--help] [-c|--colors] [/PATTERN/COLOR]..." % sys.argv[0])
+        exit(0)
+
+    if "-c" in args or "--colors" in args:
+        cols = ["%s%s%s" % (get_color(i), c, get_color()) for i, c in enumerate(palette)]
+        print("Available colors: %s." % ", ".join(cols))
+        exit(0)
+
+    pattern_color = {}
+    for idx, arg in enumerate(args, start=1):
+        if not arg:
+            warn("%i: empty argument skipped." % idx)
+            continue
+
+        cmd = arg.split(arg[0])
+
+        if len(cmd) != 3:
+            warn("%i: invalid command: '%s'." % (idx, arg))
+            exit(1)
+
+        regex, color = cmd[1:3]
+
+        try:
+            pattern = re.compile(regex)
+            color = palette.index(color)
+        except ValueError as e:
+            warn("%i: invalid color: '%s'." % (idx, color))
+            exit(1)
+        except re.error as e:
+            warn("%i: invalid pattern: %s" % (idx, e))
+            exit(1)
+
+        pattern_color[pattern] = color
+
+    for line in sys.stdin:
+        # define a color for each char in line
+        color_mask = len(line) * [0]
+        for pattern in pattern_color:
+            ranges = [m.span() for m in re.finditer(pattern, line)]
+            for start, stop in ranges:
+                color_mask[start:stop] = (stop - start) * [pattern_color[pattern]]
+
+        for start, stop, color in squeeze(color_mask):
+            color = "" if color == start == 0 else get_color(color)
+            print("%s%s" % (color, line[start:stop]), end="")
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
