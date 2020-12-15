@@ -18,17 +18,8 @@ Patterns are read from the command line, by increasing priority, and should be i
 # list available colors
 ./pylight -c
 
-# pylight self-pylight-ning
-./pylight <pylight                                            \
-    '/\b(import|from|as)\b/magenta'                           \
-    '/\b(def|in|while|for|if|else|elif)\b/magenta'            \
-    '/\b(or|and|not|continue)\b/magenta'                      \
-    '/\b(try|except|finally)\b/magenta'                       \
-    '/[a-zA-Z_]+\(/green'  '/\(/none'                         \
-    '/\b[0-9]*\b/blue'                                        \
-    '/"([^"]|\\")*"/yellow' "/'([^']|\\\')*'/yellow"          \
-    '/(\\0[0-9]{,2}|\\x[0-9a-f]{,2})/blue'                    \
-    '/#.*/black'
+# highlight some patterns
+./pylight '/\N{black heart suit}/red' '/py\w*/green' '/i/blue' <<< 'I ♥ pylight-ning'
 ```
 
 ## To do
