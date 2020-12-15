@@ -10,7 +10,7 @@ Patterns are read from the command line, by increasing priority, and should be i
 
 - `/` is a single character delimiter
 - `PATTERN` is a regular expression
-- `COLOR` is a from the available ones
+- `COLOR` is one of the available colors
 
 ## Example
 
