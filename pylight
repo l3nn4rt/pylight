@@ -19,13 +19,40 @@ color_codes = {
 
 palette = list(color_codes)
 
-def get_color(index=0):
+def get_color(index: int = 0) -> str:
+    """
+    Return ANSI escape code for the palette color with given index.
+    Raises IndexError with invalid index.
+
+    @param index: index of the palette color (0 .. len(palette))
+
+    Example:  get_color(palette.index("green"))
+    """
     return "\033[" + color_codes.get(palette[index], palette[0]) + "m"
 
-def warn(msg):
+def warn(msg: str) -> None:
+    """
+    Print a warning message with the script name prefix.
+
+    @param msg: the warning message
+    """
     print("%s: %s" % (sys.argv[0], msg), file=sys.stderr)
 
-def squeeze(lst):
+def squeeze(lst: list) -> list:
+    """
+    Return a list of triples (begin, end, sample), such that each item
+    in the input list is equal to sample from begin to end.
+
+    Begins and ends are in the typical python style, left-included and
+    right-excluded:
+        - begin is the first index at which sample is found;
+        - end is the first index at which sample is not found (new item
+        appeared or input list ended).
+
+    @param lst: the list to squeeze
+
+    Example:  squeeze(['a', 'a', 'a', 42, None, None])
+    """
     slices, begin, count = [], 0, 0
     for i, x in enumerate(lst):
         if not count:

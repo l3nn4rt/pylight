@@ -33,6 +33,7 @@ Patterns are read from the command line, by increasing priority, and should be i
 
 ## To do
 
+- handle multi-line patterns
 - use argparse
 - add more colors
 - let use custom colors
