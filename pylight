@@ -24,7 +24,7 @@ def get_color(index: int = 0) -> str:
     Return ANSI escape code for the palette color with given index.
     Raises IndexError with invalid index.
 
-    @param index: index of the palette color (0 .. len(palette))
+    @param index: index of the palette color (0 ... len(palette) - 1)
 
     Example:  get_color(palette.index("green"))
     """
